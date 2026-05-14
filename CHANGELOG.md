@@ -2,6 +2,16 @@
 
 All notable changes to terminal-agents-usage.
 
+## [0.0.7] - 2026-05-14
+
+### Changed
+
+- TUI AgentBar: fixed-width padding on detail line values so `|` and `/` separators align across all agents
+
+### Fixed
+
+- TUI Overview tab: added blank line spacing between "Agent Summary" title and agent list for readability
+
 ## [0.0.6] - 2026-05-14
 
 ### Fixed

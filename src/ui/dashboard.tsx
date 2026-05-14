@@ -160,6 +160,7 @@ function OverviewTab({ data }: { data: DashboardData }) {
       {/* Agent summary */}
       <Box flexDirection="column" marginBottom={1}>
         <Text bold underline>Agent Summary</Text>
+        <Text>{' '}</Text>
         {data.agents.length === 0 && <Text dimColor>  No data</Text>}
         {[...data.agents]
           .sort((a, b) => (b.input_tokens + b.output_tokens) - (a.input_tokens + a.output_tokens))
@@ -204,7 +205,7 @@ function AgentBar({ row, maxTokens }: { row: AgentRow; maxTokens: number }) {
       </Box>
       <Box paddingLeft={10}>
         <Text dimColor>
-          {row.sessions.toLocaleString()} sessions | in:{fmt(row.input_tokens)} out:{fmt(row.output_tokens)} | cache:{fmt(row.cache_read)} read / {fmt(row.cache_write)} write
+          {String(row.sessions).padStart(5)} sessions | in:{fmt(row.input_tokens).padStart(6)} out:{fmt(row.output_tokens).padStart(6)} | cache:{fmt(row.cache_read).padStart(6)} read / {fmt(row.cache_write).padStart(6)} write
         </Text>
       </Box>
     </Box>

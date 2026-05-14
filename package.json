@@ -1,6 +1,6 @@
 {
   "name": "terminal-agents-usage",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Unified usage dashboard for terminal AI coding agents (Claude Code, Codex, OpenClaw, etc.)",
   "type": "module",
   "main": "dist/index.js",
