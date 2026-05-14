@@ -1,7 +1,6 @@
 # terminal-agents-usage
 
-<img width="844" height="499" alt="image" src="https://github.com/user-attachments/assets/2ed0d3d3-f9de-42cc-b8e5-d6b5347815c4" />
-
+<img width="811" height="642" alt="image" src="https://github.com/user-attachments/assets/d348636e-1c55-48c7-837f-bacf6c1f7aa3" />
 
 Unified usage tracker for terminal AI coding agents — scan local agent logs, store usage data in SQLite, and view dashboards with token counts and cost estimates.
 
