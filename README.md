@@ -1,5 +1,8 @@
 # terminal-agents-usage
 
+<img width="844" height="499" alt="image" src="https://github.com/user-attachments/assets/2ed0d3d3-f9de-42cc-b8e5-d6b5347815c4" />
+
+
 Unified usage tracker for terminal AI coding agents — scan local agent logs, store usage data in SQLite, and view dashboards with token counts and cost estimates.
 
 Supported agents: **Claude Code**, **OpenAI Codex**, **OpenClaw**, **DeepCode**, **Cursor**, **Gemini**.
