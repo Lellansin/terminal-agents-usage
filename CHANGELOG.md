@@ -2,6 +2,23 @@
 
 All notable changes to terminal-agents-usage.
 
+## [0.2.0] - 2026-05-15
+
+### Added
+
+- Web dashboard: per-project daily token stats with chart visualization
+- `dashboard --dev` mode: watches `src/` and auto-restarts on code changes
+- Pricing overrides API (`/api/pricing`): edit custom model pricing via Settings UI, persisted to `~/.config/terminal-agents/pricing.overrides.json`
+- Built-in PRICING entries for Google Gemini models (gemini-2.5-pro, gemini-2.5-flash, gemini-3-pro, gemini-3-flash)
+
+### Changed
+
+- Dashboard HTML/JS extracted from `src/server.ts` into `src/web/dashboard-page.ts`
+
+### Fixed
+
+- **Cost calculation**: non-Anthropic models (DeepSeek, OpenAI, Gemini) always showed $0 because `isBillable()` only recognized models containing "opus"/"sonnet"/"haiku". Now any model with a built-in or custom pricing entry is correctly billed.
+
 ## [0.1.0] - 2026-05-14
 
 ### Changed
