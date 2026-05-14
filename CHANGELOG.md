@@ -2,6 +2,12 @@
 
 All notable changes to terminal-agents-usage.
 
+## [0.0.6] - 2026-05-14
+
+### Fixed
+
+- **TUI AgentBar**: now displays both `cache_read` and `cache_write` tokens instead of only `cache_read`. Fixes an issue where Gemini's cache data (stored as `cache_creation_tokens` from thinking tokens) was invisible in the Overview tab.
+
 ## [0.0.5] - 2026-05-14
 
 ### Fixed

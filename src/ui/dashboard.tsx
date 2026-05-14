@@ -204,7 +204,7 @@ function AgentBar({ row, maxTokens }: { row: AgentRow; maxTokens: number }) {
       </Box>
       <Box paddingLeft={10}>
         <Text dimColor>
-          {row.sessions.toLocaleString()} sessions | in:{fmt(row.input_tokens)} out:{fmt(row.output_tokens)} | cache:{fmt(row.cache_read)} read
+          {row.sessions.toLocaleString()} sessions | in:{fmt(row.input_tokens)} out:{fmt(row.output_tokens)} | cache:{fmt(row.cache_read)} read / {fmt(row.cache_write)} write
         </Text>
       </Box>
     </Box>
