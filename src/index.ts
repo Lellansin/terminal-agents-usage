@@ -122,7 +122,7 @@ const program = new Command();
 program
   .name('terminal-agents-usage')
   .description('Unified usage tracker for terminal AI coding agents')
-  .version('0.2.0');
+  .version('0.2.1');
 
 // ---- scan command ----
 program

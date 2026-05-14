@@ -2,6 +2,22 @@
 
 All notable changes to terminal-agents-usage.
 
+## [0.2.1] - 2026-05-15
+
+### Added
+
+- ESLint + Prettier config with `prepublishOnly` hook (lint → format:check → test → build)
+- Unit tests for billing engine (`tests/pricing/billing.test.ts`, 42 tests)
+
+### Changed
+
+- Extracted billing logic to `src/pricing/billing.ts` (single source of truth for cost calculation)
+- Formatted all source files with Prettier
+
+### Fixed
+
+- `isBillable` regression: custom override with `enabled: false` now correctly falls back to built-in pricing instead of returning false
+
 ## [0.2.0] - 2026-05-15
 
 ### Added
