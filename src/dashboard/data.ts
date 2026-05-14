@@ -73,6 +73,34 @@ export function getWebDashboardData(db: Database.Database) {
     turns: r.turns || 0,
   }));
 
+  // Daily per-project from session totals (bucketed by last activity date)
+  const projectDailyRows = db
+    .prepare(`
+      SELECT
+        substr(last_timestamp, 1, 10) as day,
+        COALESCE(project_name, 'unknown') as project,
+        SUM(total_input_tokens) as input_tokens,
+        SUM(total_output_tokens) as output_tokens,
+        SUM(total_cache_read) as cache_read,
+        SUM(total_cache_creation) as cache_creation,
+        COUNT(*) as sessions
+      FROM sessions
+      WHERE last_timestamp IS NOT NULL AND length(last_timestamp) >= 10
+      GROUP BY day, project
+      ORDER BY day, project
+    `)
+    .all() as any[];
+
+  const dailyByProject = projectDailyRows.map((r) => ({
+    day: r.day,
+    project: r.project,
+    input: r.input_tokens || 0,
+    output: r.output_tokens || 0,
+    cache_read: r.cache_read || 0,
+    cache_creation: r.cache_creation || 0,
+    sessions: r.sessions || 0,
+  }));
+
   // All sessions
   const sessionRows = db
     .prepare(`
@@ -115,6 +143,7 @@ export function getWebDashboardData(db: Database.Database) {
     all_models: allModels,
     all_agents: allAgents,
     daily_by_model: dailyByModel,
+    daily_by_project: dailyByProject,
     hourly_by_model: hourlyByModel,
     sessions_all: sessionsAll,
     generated_at: new Date().toISOString().slice(0, 19).replace('T', ' '),

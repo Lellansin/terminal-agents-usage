@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
+import { spawn, type ChildProcess } from 'node:child_process';
+import { watch, type FSWatcher } from 'node:fs';
 import React from 'react';
 import { render } from 'ink';
 import { getDB, closeDB } from './db.js';
@@ -24,6 +26,95 @@ function createScanner(): Scanner {
   scanner.register(new CursorAdapter());
   scanner.register(new GeminiAdapter());
   return scanner;
+}
+
+function removeDevFlag(argv: string[]): string[] {
+  const out: string[] = [];
+  for (const arg of argv) {
+    if (arg === '--dev') continue;
+    if (arg.startsWith('--dev=')) continue;
+    out.push(arg);
+  }
+  return out;
+}
+
+async function runDashboardDevMode(): Promise<void> {
+  const rawArgs = removeDevFlag(process.argv.slice(2));
+  const entry = process.argv[1] ?? '';
+  const isTsEntry = entry.endsWith('.ts') || entry.endsWith('.tsx');
+  const command = isTsEntry ? 'tsx' : process.execPath;
+  const commandArgs = isTsEntry
+    ? [entry, ...rawArgs]
+    : [entry, ...rawArgs];
+  let child: ChildProcess | null = null;
+  let watcher: FSWatcher | null = null;
+  let stopping = false;
+  let restartTimer: NodeJS.Timeout | null = null;
+
+  const spawnChild = () => {
+    child = spawn(command, commandArgs, {
+      cwd: process.cwd(),
+      env: process.env,
+      stdio: 'inherit',
+    });
+    child.on('exit', (code, signal) => {
+      if (!stopping) {
+        console.log(`[dev] dashboard process exited (code=${code ?? 'null'}, signal=${signal ?? 'null'})`);
+      }
+      child = null;
+    });
+  };
+
+  const restartChild = () => {
+    if (!child) {
+      spawnChild();
+      return;
+    }
+    child.once('exit', () => {
+      if (!stopping) spawnChild();
+    });
+    child.kill('SIGTERM');
+  };
+
+  const scheduleRestart = () => {
+    if (restartTimer) clearTimeout(restartTimer);
+    restartTimer = setTimeout(() => {
+      console.log('[dev] change detected, restarting dashboard...');
+      restartChild();
+    }, 180);
+  };
+
+  spawnChild();
+
+  try {
+    watcher = watch('src', { recursive: true }, (_event, filename) => {
+      if (!filename) return;
+      const f = String(filename);
+      if (f.endsWith('.ts') || f.endsWith('.tsx')) scheduleRestart();
+    });
+  } catch {
+    watcher = watch('src', (_event, filename) => {
+      if (!filename) return;
+      const f = String(filename);
+      if (f.endsWith('.ts') || f.endsWith('.tsx')) scheduleRestart();
+    });
+  }
+
+  const shutdown = () => {
+    if (stopping) return;
+    stopping = true;
+    if (restartTimer) clearTimeout(restartTimer);
+    watcher?.close();
+    if (child) {
+      child.kill('SIGTERM');
+      setTimeout(() => process.exit(0), 100);
+      return;
+    }
+    process.exit(0);
+  };
+
+  process.on('SIGINT', shutdown);
+  process.on('SIGTERM', shutdown);
 }
 
 const program = new Command();
@@ -185,8 +276,13 @@ program
   .command('dashboard')
   .description('Start the web dashboard (Chart.js SPA)')
   .option('--port <number>', 'Port to listen on', '8080')
+  .option('--dev', 'Watch local source changes and auto-restart dashboard')
   .option('--db-path <path>', 'Override database path')
   .action(async (options) => {
+    if (options.dev) {
+      await runDashboardDevMode();
+      return;
+    }
     const db = getDB({ dbPath: options.dbPath });
     const port = parseInt(options.port, 10) || 8080;
     createWebServer(db, port);
