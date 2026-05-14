@@ -1,0 +1,12 @@
+src/
+tests/
+node_modules/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+.env
+.DS_Store
+tsconfig.json
+vitest.config.ts
+.gitignore

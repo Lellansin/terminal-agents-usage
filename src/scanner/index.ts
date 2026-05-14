@@ -112,8 +112,14 @@ export class Scanner {
 
     // Perform the scan (non-transactional for simplicity with async parsing)
     for (const filepath of files) {
-      // Strip @@index@@ prefix for filesystem ops; keep for adapter dispatch
-      const realPath = filepath.startsWith('@@index@@') ? filepath.slice('@@index@@'.length) : filepath;
+      // Strip adapter-specific prefixes for filesystem ops; keep for adapter dispatch
+      let realPath = filepath;
+      for (const prefix of ['@@index@@', '@@store@@']) {
+        if (realPath.startsWith(prefix)) {
+          realPath = realPath.slice(prefix.length);
+          break;
+        }
+      }
       let stat: fs.Stats;
       try {
         stat = fs.statSync(realPath);

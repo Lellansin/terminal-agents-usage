@@ -19,6 +19,18 @@ Or run directly:
 npx terminal-agents-usage scan
 ```
 
+> **Tip:** After global install, you can use either `terminal-agents-usage` or the shorter alias `usage`. Both are equivalent. Examples below use `usage` for brevity.
+
+## Quick Start
+
+The fastest way to get started — just launch the interactive terminal dashboard. It auto-scans your agent logs on first run:
+
+```bash
+npx terminal-agents-usage tui
+```
+
+Press `s` to re-scan anytime, `r` to refresh, `←`/`→` to switch tabs, `q` to quit.
+
 ## Commands
 
 ### `scan`
@@ -26,9 +38,9 @@ npx terminal-agents-usage scan
 Scan local agent log files and populate the database.
 
 ```bash
-terminal-agents-usage scan              # scan all agents
-terminal-agents-usage scan --agent claude  # scan a specific agent
-terminal-agents-usage scan --rebuild     # clear and re-scan from scratch
+usage scan              # scan all agents
+usage scan --agent claude  # scan a specific agent
+usage scan --rebuild     # clear and re-scan from scratch
 ```
 
 Data is stored in `~/.terminal-agents-usage/usage.db` by default. Override with `--db-path`.
@@ -38,8 +50,8 @@ Data is stored in `~/.terminal-agents-usage/usage.db` by default. Override with 
 Show today's token usage summary (terminal UI).
 
 ```bash
-terminal-agents-usage today
-terminal-agents-usage today --agent claude
+usage today
+usage today --agent claude
 ```
 
 ### `week`
@@ -47,7 +59,7 @@ terminal-agents-usage today --agent claude
 Show the last 7 days of usage, grouped by day and agent.
 
 ```bash
-terminal-agents-usage week
+usage week
 ```
 
 ### `stats`
@@ -55,7 +67,7 @@ terminal-agents-usage week
 Show all-time statistics — total sessions, total tokens, first/last usage per agent.
 
 ```bash
-terminal-agents-usage stats
+usage stats
 ```
 
 ### `dashboard`
@@ -63,25 +75,26 @@ terminal-agents-usage stats
 Start a web dashboard with interactive Chart.js charts.
 
 ```bash
-terminal-agents-usage dashboard
-terminal-agents-usage dashboard --port 3000
+usage dashboard
+usage dashboard --port 3000
 ```
 
 Open `http://localhost:8080` to view daily charts, top projects, agent breakdowns, and cost estimates.
 
 ### `tui`
 
-Start the interactive terminal dashboard (built with Ink/React).
+Start the interactive terminal dashboard (built with Ink/React). Auto-scans on first run if no data exists. Press `s` to manually re-scan.
 
 ```bash
-terminal-agents-usage tui
+usage tui
 ```
 
 ## How it works
 
 1. Each agent keeps local log files (JSONL, JSON) of conversations with token usage metadata.
 2. `scan` reads those files via agent-specific adapters and writes structured records into a local SQLite database.
-3. `today` / `week` / `stats` / `dashboard` / `tui` query the database and present the data.
+3. `tui` auto-scans on first run, so you can jump straight in with `npx terminal-agents-usage tui`.
+4. `today` / `week` / `stats` / `dashboard` / `tui` query the database and present the data.
 
 ## Pricing
 

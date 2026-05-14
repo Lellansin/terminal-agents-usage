@@ -31,7 +31,7 @@ const program = new Command();
 program
   .name('terminal-agents-usage')
   .description('Unified usage tracker for terminal AI coding agents')
-  .version('0.1.0');
+  .version('0.0.2');
 
 // ---- scan command ----
 program
@@ -195,11 +195,26 @@ program
 // ---- tui command (Ink interactive terminal UI) ----
 program
   .command('tui')
-  .description('Start the interactive terminal dashboard')
+  .description('Start the interactive terminal dashboard (auto-scans on first run)')
   .option('--db-path <path>', 'Override database path')
   .action(async (options) => {
     const db = getDB({ dbPath: options.dbPath });
-    render(React.createElement(DashboardApp, { db }), { exitOnCtrlC: true });
+    const scanner = createScanner();
+
+    // Auto-scan on first run if database is empty
+    const { count } = db.prepare('SELECT COUNT(*) as count FROM turns').get() as { count: number };
+    if (count === 0) {
+      await scanner.scan(db);
+    }
+
+    const doScan = async () => {
+      await scanner.scan(db);
+    };
+
+    render(
+      React.createElement(DashboardApp, { db, onScan: doScan }),
+      { exitOnCtrlC: true },
+    );
   });
 
 // Default: show help

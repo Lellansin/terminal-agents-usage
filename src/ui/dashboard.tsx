@@ -38,13 +38,15 @@ function agentColor(agent: string): string {
 
 interface Props {
   db: Database.Database;
+  onScan?: () => Promise<void>;
 }
 
-export function DashboardApp({ db }: Props): React.ReactElement {
+export function DashboardApp({ db, onScan }: Props): React.ReactElement {
   const { exit } = useApp();
   const [data, setData] = useState<DashboardData>(() => queryDashboard(db));
   const [lastRefresh, setLastRefresh] = useState(() => new Date());
   const [selectedTab, setSelectedTab] = useState<'overview' | 'models' | 'week'>('overview');
+  const [scanning, setScanning] = useState(false);
 
   const refresh = useCallback(() => {
     setData(queryDashboard(db));
@@ -63,6 +65,13 @@ export function DashboardApp({ db }: Props): React.ReactElement {
     }
     if (input === 'r') {
       refresh();
+    }
+    if (input === 's' && onScan) {
+      setScanning(true);
+      onScan().then(() => {
+        setScanning(false);
+        refresh();
+      });
     }
     if (input === '1') setSelectedTab('overview');
     if (input === '2') setSelectedTab('models');
@@ -83,9 +92,14 @@ export function DashboardApp({ db }: Props): React.ReactElement {
     <Box flexDirection="column" padding={1}>
       {/* Header */}
       <Box justifyContent="space-between" marginBottom={1}>
-        <Text bold color="cyan">
-          ⚡ Terminal Agents Usage
-        </Text>
+        <Box>
+          <Text bold color="cyan">
+            ⚡ Terminal Agents Usage
+          </Text>
+          {scanning && (
+            <Text color="yellow">  (scanning...)</Text>
+          )}
+        </Box>
         <Text dimColor>
           {data.totalSessions.toLocaleString()} sessions |{' '}
           {fmt(data.totalTokens)} tokens | refreshed{' '}
@@ -132,7 +146,7 @@ export function DashboardApp({ db }: Props): React.ReactElement {
         </Text>
       </Box>
       <Text dimColor>
-        [1-3] tabs · [←→/tab] switch · [r] refresh · [q/ctrl+c] quit  · auto-refresh 30s
+        [1-3] tabs · [←→/tab] switch · [s] scan · [r] refresh · [q/ctrl+c] quit  · auto-refresh 30s
       </Text>
     </Box>
   );
