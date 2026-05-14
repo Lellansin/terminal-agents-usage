@@ -126,7 +126,7 @@ export class CodexAdapter extends BaseAdapter {
           model_provider: typeof p.model_provider === 'string' ? p.model_provider : undefined,
           git_branch:
             typeof p.git === 'object' && p.git !== null
-              ? (p.git as Record<string, unknown>).branch as string | undefined
+              ? ((p.git as Record<string, unknown>).branch as string | undefined)
               : undefined,
           created_at: typeof p.timestamp === 'string' ? p.timestamp : undefined,
         };
@@ -155,7 +155,12 @@ export class CodexAdapter extends BaseAdapter {
             // Implicit task start: no task_started event seen yet
             inTask = true;
             taskStartedAt = event.timestamp;
-            taskTokenAccum = { input_tokens: 0, output_tokens: 0, cache_read_tokens: 0, cache_creation_tokens: 0 };
+            taskTokenAccum = {
+              input_tokens: 0,
+              output_tokens: 0,
+              cache_read_tokens: 0,
+              cache_creation_tokens: 0,
+            };
           }
 
           taskTokenAccum!.input_tokens += lu.input_tokens;
@@ -169,7 +174,12 @@ export class CodexAdapter extends BaseAdapter {
           if (!inTask) {
             inTask = true;
             taskStartedAt = event.timestamp;
-            taskTokenAccum = { input_tokens: 0, output_tokens: 0, cache_read_tokens: 0, cache_creation_tokens: 0 };
+            taskTokenAccum = {
+              input_tokens: 0,
+              output_tokens: 0,
+              cache_read_tokens: 0,
+              cache_creation_tokens: 0,
+            };
           }
           continue;
         }
@@ -177,7 +187,15 @@ export class CodexAdapter extends BaseAdapter {
         if (p.type === 'task_complete') {
           if (inTask && taskTokenAccum) {
             const turnTs = taskStartedAt ?? event.timestamp;
-            turns.push(this.makeTurn(sessionMeta?.id ?? '', taskTokenAccum, currentModel, turnTs, sessionMeta?.cwd));
+            turns.push(
+              this.makeTurn(
+                sessionMeta?.id ?? '',
+                taskTokenAccum,
+                currentModel,
+                turnTs,
+                sessionMeta?.cwd,
+              ),
+            );
           }
           inTask = false;
           taskTokenAccum = null;
@@ -192,8 +210,15 @@ export class CodexAdapter extends BaseAdapter {
             firstUserMessage = msg.slice(0, 200);
           } else if (Array.isArray(msg)) {
             for (const item of msg) {
-              if (item && typeof item === 'object' && (item as Record<string, unknown>).type === 'input_text') {
-                firstUserMessage = String((item as Record<string, unknown>).text ?? '').slice(0, 200);
+              if (
+                item &&
+                typeof item === 'object' &&
+                (item as Record<string, unknown>).type === 'input_text'
+              ) {
+                firstUserMessage = String((item as Record<string, unknown>).text ?? '').slice(
+                  0,
+                  200,
+                );
                 break;
               }
             }
@@ -211,7 +236,13 @@ export class CodexAdapter extends BaseAdapter {
     if (inTask && taskTokenAccum) {
       const turnTs = taskStartedAt ?? sessionMeta?.created_at ?? '';
       turns.push(
-        this.makeTurn(sessionMeta?.id ?? '', taskTokenAccum, currentModel, turnTs, sessionMeta?.cwd),
+        this.makeTurn(
+          sessionMeta?.id ?? '',
+          taskTokenAccum,
+          currentModel,
+          turnTs,
+          sessionMeta?.cwd,
+        ),
       );
     }
 
@@ -275,7 +306,12 @@ export class CodexAdapter extends BaseAdapter {
 
   private makeTurn(
     sessionId: string,
-    accum: { input_tokens: number; output_tokens: number; cache_read_tokens: number; cache_creation_tokens: number },
+    accum: {
+      input_tokens: number;
+      output_tokens: number;
+      cache_read_tokens: number;
+      cache_creation_tokens: number;
+    },
     model: string | null,
     timestamp: string,
     cwd?: string,

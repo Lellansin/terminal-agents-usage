@@ -155,10 +155,7 @@ export class ClaudeAdapter extends BaseAdapter {
     return dirs;
   }
 
-  private processRecord(
-    record: ClaudeMessage,
-    sessions: Map<string, ParsedSession>,
-  ): void {
+  private processRecord(record: ClaudeMessage, sessions: Map<string, ParsedSession>): void {
     // Only process assistant messages with usage data
     // User messages may also have message.usage (zeroed out); strictly check type
     if (record.type !== 'assistant') return;

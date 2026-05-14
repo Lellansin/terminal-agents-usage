@@ -50,7 +50,9 @@ export interface DashboardData {
 export function queryDashboard(db: Database.Database): DashboardData {
   const today = new Date().toISOString().slice(0, 10);
 
-  const todayRows = db.prepare(`
+  const todayRows = db
+    .prepare(
+      `
     SELECT agent, model,
       SUM(input_tokens) as input_tokens,
       SUM(output_tokens) as output_tokens,
@@ -61,9 +63,13 @@ export function queryDashboard(db: Database.Database): DashboardData {
     WHERE date(timestamp) = ?
     GROUP BY agent, model
     ORDER BY agent, model
-  `).all(today) as TodayRow[];
+  `,
+    )
+    .all(today) as TodayRow[];
 
-  const weekRows = db.prepare(`
+  const weekRows = db
+    .prepare(
+      `
     SELECT date(timestamp) as day, agent,
       SUM(input_tokens) as input_tokens,
       SUM(output_tokens) as output_tokens,
@@ -73,9 +79,13 @@ export function queryDashboard(db: Database.Database): DashboardData {
     WHERE timestamp >= date('now', '-7 days')
     GROUP BY day, agent
     ORDER BY day DESC, agent
-  `).all() as WeekRow[];
+  `,
+    )
+    .all() as WeekRow[];
 
-  const agentRows = db.prepare(`
+  const agentRows = db
+    .prepare(
+      `
     SELECT agent,
       COUNT(DISTINCT session_id) as sessions,
       SUM(input_tokens) as input_tokens,
@@ -85,9 +95,13 @@ export function queryDashboard(db: Database.Database): DashboardData {
     FROM turns
     GROUP BY agent
     ORDER BY agent
-  `).all() as AgentRow[];
+  `,
+    )
+    .all() as AgentRow[];
 
-  const modelRows = db.prepare(`
+  const modelRows = db
+    .prepare(
+      `
     SELECT model, agent,
       SUM(input_tokens) as input_tokens,
       SUM(output_tokens) as output_tokens,
@@ -99,14 +113,20 @@ export function queryDashboard(db: Database.Database): DashboardData {
     GROUP BY model
     ORDER BY SUM(input_tokens + output_tokens) DESC
     LIMIT 12
-  `).all() as ModelRow[];
+  `,
+    )
+    .all() as ModelRow[];
 
-  const totals = db.prepare(`
+  const totals = db
+    .prepare(
+      `
     SELECT
       COALESCE(SUM(input_tokens + output_tokens), 0) as totalTokens,
       COALESCE(COUNT(DISTINCT session_id), 0) as totalSessions
     FROM turns
-  `).get() as { totalTokens: number; totalSessions: number };
+  `,
+    )
+    .get() as { totalTokens: number; totalSessions: number };
 
   return {
     today: todayRows,

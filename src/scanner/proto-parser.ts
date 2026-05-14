@@ -105,10 +105,7 @@ export function getField(
 /**
  * Get all field values by field number.
  */
-export function getFields(
-  msg: Map<number, ProtoField[]>,
-  fieldNumber: number,
-): ProtoField[] {
+export function getFields(msg: Map<number, ProtoField[]>, fieldNumber: number): ProtoField[] {
   return msg.get(fieldNumber) ?? [];
 }
 
@@ -149,7 +146,7 @@ export interface ContextStats {
 
 /**
  * Parse context stats from a root blob buffer (the protobuf field 5 value).
- * 
+ *
  * Structure:
  *   field 1 (varint)  → context total tokens
  *   field 2 (varint)  → context window limit

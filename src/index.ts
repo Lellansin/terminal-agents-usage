@@ -43,9 +43,7 @@ async function runDashboardDevMode(): Promise<void> {
   const entry = process.argv[1] ?? '';
   const isTsEntry = entry.endsWith('.ts') || entry.endsWith('.tsx');
   const command = isTsEntry ? 'tsx' : process.execPath;
-  const commandArgs = isTsEntry
-    ? [entry, ...rawArgs]
-    : [entry, ...rawArgs];
+  const commandArgs = isTsEntry ? [entry, ...rawArgs] : [entry, ...rawArgs];
   let child: ChildProcess | null = null;
   let watcher: FSWatcher | null = null;
   let stopping = false;
@@ -59,7 +57,9 @@ async function runDashboardDevMode(): Promise<void> {
     });
     child.on('exit', (code, signal) => {
       if (!stopping) {
-        console.log(`[dev] dashboard process exited (code=${code ?? 'null'}, signal=${signal ?? 'null'})`);
+        console.log(
+          `[dev] dashboard process exited (code=${code ?? 'null'}, signal=${signal ?? 'null'})`,
+        );
       }
       child = null;
     });
@@ -135,9 +135,7 @@ program
     const db = getDB({ dbPath: options.dbPath });
     const scanner = createScanner();
 
-    const agents = options.agent
-      ? [options.agent]
-      : scanner.listAgents();
+    const agents = options.agent ? [options.agent] : scanner.listAgents();
 
     if (options.rebuild) {
       console.log(`Rebuilding data for: ${agents.join(', ')}`);
@@ -187,9 +185,7 @@ program
     const rows = db.prepare(query).all(...params) as DailyStats[];
     closeDB();
 
-    const { unmount } = render(
-      React.createElement(TodayView, { stats: rows }),
-    );
+    const { unmount } = render(React.createElement(TodayView, { stats: rows }));
     // Ink 5 auto-refresh workaround: let it render once then exit
     await new Promise((resolve) => setTimeout(resolve, 50));
     unmount();
@@ -225,9 +221,7 @@ program
     const rows = db.prepare(query).all(...params) as WeeklyStats[];
     closeDB();
 
-    const { unmount } = render(
-      React.createElement(WeekView, { stats: rows }),
-    );
+    const { unmount } = render(React.createElement(WeekView, { stats: rows }));
     await new Promise((resolve) => setTimeout(resolve, 50));
     unmount();
   });
@@ -264,9 +258,7 @@ program
     const rows = db.prepare(query).all(...params) as AllTimeStats[];
     closeDB();
 
-    const { unmount } = render(
-      React.createElement(StatsView, { stats: rows }),
-    );
+    const { unmount } = render(React.createElement(StatsView, { stats: rows }));
     await new Promise((resolve) => setTimeout(resolve, 50));
     unmount();
   });
@@ -307,10 +299,7 @@ program
       await scanner.scan(db);
     };
 
-    render(
-      React.createElement(DashboardApp, { db, onScan: doScan }),
-      { exitOnCtrlC: true },
-    );
+    render(React.createElement(DashboardApp, { db, onScan: doScan }), { exitOnCtrlC: true });
   });
 
 // Default: show help

@@ -60,9 +60,13 @@ export class GeminiAdapter extends BaseAdapter {
               files.push(path.join(chatsDir, f.name));
             }
           }
-        } catch { /* skip */ }
+        } catch {
+          /* skip */
+        }
       }
-    } catch { /* skip */ }
+    } catch {
+      /* skip */
+    }
 
     return files;
   }
@@ -113,15 +117,17 @@ export class GeminiAdapter extends BaseAdapter {
             model: record.model ?? null,
             input_tokens: record.tokens.input,
             output_tokens: record.tokens.output,
-            cache_read_tokens: record.tokens.cached,        // Gemini context caching
-            cache_creation_tokens: record.tokens.thoughts,  // thinking tokens count as cache creation
+            cache_read_tokens: record.tokens.cached, // Gemini context caching
+            cache_creation_tokens: record.tokens.thoughts, // thinking tokens count as cache creation
             tool_name: null,
             cwd: null,
             source_id: record.id,
           };
           turns.push(turn);
         }
-      } catch { /* skip malformed lines */ }
+      } catch {
+        /* skip malformed lines */
+      }
     }
 
     rl.close();

@@ -3,11 +3,7 @@ import * as path from 'node:path';
 import * as os from 'node:os';
 import Database from 'better-sqlite3';
 import { BaseAdapter } from './base-adapter.js';
-import {
-  parseContextStats,
-  getField,
-  parseMessage,
-} from './proto-parser.js';
+import { parseContextStats, getField, parseMessage } from './proto-parser.js';
 import type { ParseOutput, SessionRecord, TurnRecord } from './types.js';
 import type { ContextStats } from './proto-parser.js';
 
@@ -63,9 +59,9 @@ export class CursorAdapter extends BaseAdapter {
 
     try {
       // Read meta
-      const metaRow = db
-        .prepare("SELECT value FROM meta WHERE key = '0'")
-        .get() as { value: string } | undefined;
+      const metaRow = db.prepare("SELECT value FROM meta WHERE key = '0'").get() as
+        | { value: string }
+        | undefined;
 
       if (metaRow) {
         const jsonStr = Buffer.from(metaRow.value, 'hex').toString('utf-8');

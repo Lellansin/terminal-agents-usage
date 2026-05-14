@@ -37,9 +37,7 @@ export class Scanner {
       sessionsSeen: 0,
     };
 
-    const agentsToScan = opts.agent
-      ? [opts.agent]
-      : [...this.adapters.keys()];
+    const agentsToScan = opts.agent ? [opts.agent] : [...this.adapters.keys()];
 
     if (opts.rebuild) {
       for (const agentName of agentsToScan) {
@@ -67,10 +65,7 @@ export class Scanner {
     return result;
   }
 
-  private async scanAgent(
-    db: Database.Database,
-    adapter: AgentAdapter,
-  ): Promise<ScanResult> {
+  private async scanAgent(db: Database.Database, adapter: AgentAdapter): Promise<ScanResult> {
     const result: ScanResult = {
       newFiles: 0,
       updatedFiles: 0,
@@ -215,5 +210,3 @@ export class Scanner {
     `);
   }
 }
-
-

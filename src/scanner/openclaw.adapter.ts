@@ -61,7 +61,10 @@ export class OpenClawAdapter extends BaseAdapter {
     try {
       const entries = fs.readdirSync(sessionsDir, { withFileTypes: true });
       for (const entry of entries) {
-        if (entry.isFile() && (entry.name.endsWith('.jsonl') || entry.name.endsWith('.trajectory.jsonl'))) {
+        if (
+          entry.isFile() &&
+          (entry.name.endsWith('.jsonl') || entry.name.endsWith('.trajectory.jsonl'))
+        ) {
           files.push(path.join(sessionsDir, entry.name));
         }
       }
@@ -85,10 +88,7 @@ export class OpenClawAdapter extends BaseAdapter {
 
   // ---- Standard format ----
 
-  private async parseStandardFile(
-    filepath: string,
-    options?: ParseOptions,
-  ): Promise<ParseOutput> {
+  private async parseStandardFile(filepath: string, options?: ParseOptions): Promise<ParseOutput> {
     const sessions = new Map<string, ParsedSession>();
     let lineCount = 0;
     const startLine = options?.sinceLine ?? 0;

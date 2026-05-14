@@ -3,24 +3,27 @@ import type Database from 'better-sqlite3';
 export function getWebDashboardData(db: Database.Database) {
   // All models (for filter UI)
   const modelRows = db
-    .prepare(`
+    .prepare(
+      `
       SELECT COALESCE(model, 'unknown') as model
       FROM turns
       GROUP BY model
       ORDER BY SUM(input_tokens + output_tokens) DESC
-    `)
+    `,
+    )
     .all() as { model: string }[];
   const allModels = modelRows.map((r) => r.model);
 
   // All agents
-  const agentRows = db
-    .prepare(`SELECT agent FROM turns GROUP BY agent ORDER BY agent`)
-    .all() as { agent: string }[];
+  const agentRows = db.prepare(`SELECT agent FROM turns GROUP BY agent ORDER BY agent`).all() as {
+    agent: string;
+  }[];
   const allAgents = agentRows.map((r) => r.agent);
 
   // Daily per-model (all history, client filters)
   const dailyRows = db
-    .prepare(`
+    .prepare(
+      `
       SELECT
         substr(timestamp, 1, 10) as day,
         agent,
@@ -33,7 +36,8 @@ export function getWebDashboardData(db: Database.Database) {
       FROM turns
       GROUP BY day, agent, model
       ORDER BY day, agent, model
-    `)
+    `,
+    )
     .all() as any[];
 
   const dailyByModel = dailyRows.map((r) => ({
@@ -49,7 +53,8 @@ export function getWebDashboardData(db: Database.Database) {
 
   // Hourly per-day per-model
   const hourlyRows = db
-    .prepare(`
+    .prepare(
+      `
       SELECT
         substr(timestamp, 1, 10) as day,
         CAST(substr(timestamp, 12, 2) AS INTEGER) as hour,
@@ -61,7 +66,8 @@ export function getWebDashboardData(db: Database.Database) {
       WHERE timestamp IS NOT NULL AND length(timestamp) >= 13
       GROUP BY day, hour, agent, model
       ORDER BY day, hour, agent, model
-    `)
+    `,
+    )
     .all() as any[];
 
   const hourlyByModel = hourlyRows.map((r) => ({
@@ -75,7 +81,8 @@ export function getWebDashboardData(db: Database.Database) {
 
   // Daily per-project from session totals (bucketed by last activity date)
   const projectDailyRows = db
-    .prepare(`
+    .prepare(
+      `
       SELECT
         substr(last_timestamp, 1, 10) as day,
         COALESCE(project_name, 'unknown') as project,
@@ -88,7 +95,8 @@ export function getWebDashboardData(db: Database.Database) {
       WHERE last_timestamp IS NOT NULL AND length(last_timestamp) >= 10
       GROUP BY day, project
       ORDER BY day, project
-    `)
+    `,
+    )
     .all() as any[];
 
   const dailyByProject = projectDailyRows.map((r) => ({
@@ -103,14 +111,16 @@ export function getWebDashboardData(db: Database.Database) {
 
   // All sessions
   const sessionRows = db
-    .prepare(`
+    .prepare(
+      `
       SELECT
         session_id, agent, project_name, title, first_timestamp, last_timestamp,
         total_input_tokens, total_output_tokens,
         total_cache_read, total_cache_creation, model, turn_count, git_branch
       FROM sessions
       ORDER BY last_timestamp DESC
-    `)
+    `,
+    )
     .all() as any[];
 
   const sessionsAll = sessionRows.map((r) => {
@@ -118,8 +128,10 @@ export function getWebDashboardData(db: Database.Database) {
     try {
       const t1 = new Date(r.first_timestamp.replace('Z', '+00:00'));
       const t2 = new Date(r.last_timestamp.replace('Z', '+00:00'));
-      durationMin = Math.round((t2.getTime() - t1.getTime()) / 60000 * 10) / 10;
-    } catch { /* keep 0 */ }
+      durationMin = Math.round(((t2.getTime() - t1.getTime()) / 60000) * 10) / 10;
+    } catch {
+      /* keep 0 */
+    }
 
     return {
       session_id: r.session_id.slice(0, 8),

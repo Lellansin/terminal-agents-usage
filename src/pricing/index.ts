@@ -29,9 +29,7 @@ export interface PricingRegistry {
 /**
  * Create a pricing registry with the given entries.
  */
-export function createPricingRegistry(
-  entries: PricingEntry[],
-): PricingRegistry {
+export function createPricingRegistry(entries: PricingEntry[]): PricingRegistry {
   const byModel = new Map<string, PricingEntry>();
 
   for (const entry of entries) {

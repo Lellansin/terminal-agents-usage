@@ -35,9 +35,7 @@ describe('ClaudeAdapter', () => {
     // Check sessions
     expect(result.sessions).toHaveLength(2);
 
-    const sessionABC = result.sessions.find(
-      (s) => s.session_id === 'session-abc-123',
-    );
+    const sessionABC = result.sessions.find((s) => s.session_id === 'session-abc-123');
     expect(sessionABC).toBeDefined();
     expect(sessionABC!.agent).toBe('claude');
     expect(sessionABC!.project_name).toBe('dev/my-project');
@@ -50,9 +48,7 @@ describe('ClaudeAdapter', () => {
     expect(sessionABC!.model).toBe('claude-sonnet-4-20250514');
     expect(sessionABC!.model_provider).toBe('anthropic');
 
-    const sessionDEF = result.sessions.find(
-      (s) => s.session_id === 'session-def-456',
-    );
+    const sessionDEF = result.sessions.find((s) => s.session_id === 'session-def-456');
     expect(sessionDEF).toBeDefined();
     expect(sessionDEF!.project_name).toBe('dev/another-project');
     expect(sessionDEF!.git_branch).toBe('feature/test');
@@ -70,9 +66,7 @@ describe('ClaudeAdapter', () => {
   it('should extract project name from cwd correctly', async () => {
     const result = await adapter.parseFile(fixturePath);
 
-    const session = result.sessions.find(
-      (s) => s.session_id === 'session-abc-123',
-    );
+    const session = result.sessions.find((s) => s.session_id === 'session-abc-123');
     expect(session?.project_name).toBe('dev/my-project');
   });
 });

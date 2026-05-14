@@ -54,7 +54,9 @@ export class DeepCodeAdapter extends BaseAdapter {
         const settings = JSON.parse(raw);
         this._model = settings?.env?.MODEL ?? null;
       }
-    } catch { /* keep null */ }
+    } catch {
+      /* keep null */
+    }
     return this._model;
   }
 
@@ -84,9 +86,13 @@ export class DeepCodeAdapter extends BaseAdapter {
               files.push(path.join(subDir, sub.name));
             }
           }
-        } catch { /* skip */ }
+        } catch {
+          /* skip */
+        }
       }
-    } catch { /* skip */ }
+    } catch {
+      /* skip */
+    }
 
     return files;
   }
@@ -139,8 +145,7 @@ export class DeepCodeAdapter extends BaseAdapter {
           entry.usage.prompt_tokens_details?.cached_tokens ??
           entry.usage.prompt_cache_hit_tokens ??
           0,
-        cache_creation_tokens:
-          entry.usage.completion_tokens_details?.reasoning_tokens ?? 0,
+        cache_creation_tokens: entry.usage.completion_tokens_details?.reasoning_tokens ?? 0,
         tool_name: null,
         cwd: null,
         source_id: `deepcode-index-${sessionId}`,
@@ -162,10 +167,7 @@ export class DeepCodeAdapter extends BaseAdapter {
 
   // ---- JSONL parser (supplemental turn counts) ----
 
-  private async parseJsonlFile(
-    filepath: string,
-    options?: ParseOptions,
-  ): Promise<ParseOutput> {
+  private async parseJsonlFile(filepath: string, options?: ParseOptions): Promise<ParseOutput> {
     const turnsPerSession = new Map<string, number>();
     let lineCount = 0;
     const startLine = options?.sinceLine ?? 0;
@@ -183,12 +185,11 @@ export class DeepCodeAdapter extends BaseAdapter {
       try {
         const record: DeepCodeJsonlMessage = JSON.parse(trimmed);
         if (record.role === 'assistant' && record.sessionId) {
-          turnsPerSession.set(
-            record.sessionId,
-            (turnsPerSession.get(record.sessionId) ?? 0) + 1,
-          );
+          turnsPerSession.set(record.sessionId, (turnsPerSession.get(record.sessionId) ?? 0) + 1);
         }
-      } catch { /* skip */ }
+      } catch {
+        /* skip */
+      }
     }
 
     rl.close();

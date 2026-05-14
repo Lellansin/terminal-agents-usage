@@ -752,7 +752,11 @@ function getCustomPricing(model) {
 
 function isBillable(model) {
   if (!model) return false;
-  if (customModelPricing[model]) return !!customModelPricing[model].enabled;
+  // Custom override enabled → billable. Disabled → check built-in PRICING.
+  if (customModelPricing[model]) {
+    if (customModelPricing[model].enabled) return true;
+    return getPricing(model) !== null;
+  }
   // Check if built-in PRICING or fallback lookup returns a tier for this model
   return getPricing(model) !== null;
 }
@@ -992,7 +996,19 @@ function updateStaticText() {
 
 function pricingSeedForModel(model) {
   const custom = customModelPricing[model];
-  if (custom) return { enabled: !!custom.enabled, input: custom.input ?? 0, output: custom.output ?? 0, cache_write: custom.cache_write ?? 0, cache_read: custom.cache_read ?? 0 };
+  if (custom) {
+    const enabled = !!custom.enabled;
+    // If the override is disabled but built-in PRICING is available, suggest enabled
+    const p = getPricing(model);
+    const suggestEnabled = enabled || (p !== null && p !== custom);
+    return {
+      enabled: suggestEnabled,
+      input: custom.input ?? p?.input ?? 0,
+      output: custom.output ?? p?.output ?? 0,
+      cache_write: custom.cache_write ?? p?.cache_write ?? 0,
+      cache_read: custom.cache_read ?? p?.cache_read ?? 0,
+    };
+  }
   const p = getPricing(model);
   if (p && isBillable(model)) return { enabled: true, input: p.input ?? 0, output: p.output ?? 0, cache_write: p.cache_write ?? 0, cache_read: p.cache_read ?? 0 };
   return { enabled: false, input: 0, output: 0, cache_write: 0, cache_read: 0 };

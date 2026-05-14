@@ -15,9 +15,7 @@ describe('Database Schema', () => {
 
   it('should create all required tables', () => {
     const tables = db
-      .prepare(
-        "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name",
-      )
+      .prepare("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
       .all() as { name: string }[];
 
     const names = tables.map((t) => t.name).sort();
@@ -28,9 +26,7 @@ describe('Database Schema', () => {
 
   it('should create unique index on turns(source_id, agent)', () => {
     const indexes = db
-      .prepare(
-        "SELECT name FROM sqlite_master WHERE type='index' AND name='idx_turns_source_id'",
-      )
+      .prepare("SELECT name FROM sqlite_master WHERE type='index' AND name='idx_turns_source_id'")
       .all();
 
     expect(indexes).toHaveLength(1);
@@ -61,7 +57,9 @@ describe('Database Schema', () => {
       5,
     );
 
-    const row = db.prepare('SELECT * FROM sessions WHERE session_id = ?').get('test-session-1') as any;
+    const row = db
+      .prepare('SELECT * FROM sessions WHERE session_id = ?')
+      .get('test-session-1') as any;
     expect(row.agent).toBe('claude');
     expect(row.project_name).toBe('test/project');
     expect(row.total_input_tokens).toBe(1000);
@@ -80,14 +78,32 @@ describe('Database Schema', () => {
 
     // First insert
     insert.run(
-      'claude', 's1', '2025-01-15T10:00:00Z', 'claude-sonnet-4',
-      100, 50, 10, 5, null, '/test', 'msg-001',
+      'claude',
+      's1',
+      '2025-01-15T10:00:00Z',
+      'claude-sonnet-4',
+      100,
+      50,
+      10,
+      5,
+      null,
+      '/test',
+      'msg-001',
     );
 
     // Second insert with same agent + source_id => ignored
     insert.run(
-      'claude', 's1', '2025-01-15T10:00:00Z', 'claude-sonnet-4',
-      999, 999, 0, 0, null, '/test', 'msg-001',
+      'claude',
+      's1',
+      '2025-01-15T10:00:00Z',
+      'claude-sonnet-4',
+      999,
+      999,
+      0,
+      0,
+      null,
+      '/test',
+      'msg-001',
     );
 
     const rows = db.prepare('SELECT * FROM turns').all() as any[];
@@ -102,14 +118,18 @@ describe('Database Schema', () => {
 
     insert.run('/tmp/test.jsonl', 'claude', 1234567890.0, 42);
 
-    const row = db.prepare('SELECT * FROM processed_files WHERE path = ?').get('/tmp/test.jsonl') as any;
+    const row = db
+      .prepare('SELECT * FROM processed_files WHERE path = ?')
+      .get('/tmp/test.jsonl') as any;
     expect(row.agent).toBe('claude');
     expect(row.mtime).toBe(1234567890.0);
     expect(row.lines).toBe(42);
 
     // Replace
     insert.run('/tmp/test.jsonl', 'claude', 9876543210.0, 100);
-    const updated = db.prepare('SELECT * FROM processed_files WHERE path = ?').get('/tmp/test.jsonl') as any;
+    const updated = db
+      .prepare('SELECT * FROM processed_files WHERE path = ?')
+      .get('/tmp/test.jsonl') as any;
     expect(updated.lines).toBe(100);
   });
 });

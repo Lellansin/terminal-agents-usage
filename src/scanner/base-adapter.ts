@@ -49,9 +49,7 @@ export abstract class BaseAdapter implements AgentAdapter {
     turns: TurnRecord[],
     override?: Partial<SessionRecord>,
   ): SessionRecord {
-    const sorted = [...turns].sort(
-      (a, b) => a.timestamp.localeCompare(b.timestamp),
-    );
+    const sorted = [...turns].sort((a, b) => a.timestamp.localeCompare(b.timestamp));
 
     // Pick model: most frequent across turns, with priority fallback
     const modelCounts = new Map<string, number>();
@@ -95,10 +93,7 @@ export abstract class BaseAdapter implements AgentAdapter {
       const modelLower = model.toLowerCase();
       const prio = priorityOrder.findIndex((p) => modelLower.includes(p));
 
-      if (
-        count > bestCount ||
-        (count === bestCount && prio > bestPriority)
-      ) {
+      if (count > bestCount || (count === bestCount && prio > bestPriority)) {
         best = model;
         bestCount = count;
         bestPriority = prio;
