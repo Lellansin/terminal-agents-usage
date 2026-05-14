@@ -2,6 +2,17 @@
 
 All notable changes to terminal-agents-usage.
 
+## [0.1.0] - 2026-05-14
+
+### Changed
+
+- **Cursor adapter**: removed legacy `ai-code-tracking.db` parsing; now only uses `store.db` from `~/.cursor/chats/`
+- **Scanner**: removed internal `@@store@@` path prefix for Cursor adapter, simplifying file discovery
+
+### Removed
+
+- Old Cursor tracking DB support (`ai-code-tracking.db`, `conversation_summaries`, `ai_code_hashes` tables)
+
 ## [0.0.8] - 2026-05-14
 
 ### Changed

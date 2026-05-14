@@ -114,7 +114,7 @@ export class Scanner {
     for (const filepath of files) {
       // Strip adapter-specific prefixes for filesystem ops; keep for adapter dispatch
       let realPath = filepath;
-      for (const prefix of ['@@index@@', '@@store@@']) {
+      for (const prefix of ['@@index@@']) {
         if (realPath.startsWith(prefix)) {
           realPath = realPath.slice(prefix.length);
           break;

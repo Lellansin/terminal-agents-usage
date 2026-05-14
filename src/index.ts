@@ -31,7 +31,7 @@ const program = new Command();
 program
   .name('terminal-agents-usage')
   .description('Unified usage tracker for terminal AI coding agents')
-  .version('0.0.8');
+  .version('0.1.0');
 
 // ---- scan command ----
 program
