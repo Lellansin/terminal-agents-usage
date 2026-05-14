@@ -2,6 +2,12 @@
 
 All notable changes to terminal-agents-usage.
 
+## [0.0.8] - 2026-05-14
+
+### Changed
+
+- Moved default database path from `~/.terminal-agents-usage/usage.db` to `~/.config/terminal-agents/usage.db` for better XDG compliance
+
 ## [0.0.7] - 2026-05-14
 
 ### Changed

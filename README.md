@@ -42,7 +42,7 @@ usage scan --agent claude  # scan a specific agent
 usage scan --rebuild     # clear and re-scan from scratch
 ```
 
-Data is stored in `~/.terminal-agents-usage/usage.db` by default. Override with `--db-path`.
+Data is stored in `~/.config/terminal-agents/usage.db` by default. Override with `--db-path`.
 
 ### `today`
 

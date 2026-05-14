@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS processed_files (
 let _db: Database.Database | null = null;
 
 export function getDefaultDbPath(): string {
-  return path.join(os.homedir(), '.terminal-agents-usage', 'usage.db');
+  return path.join(os.homedir(), '.config', 'terminal-agents', 'usage.db');
 }
 
 export function getDB(opts?: DBOptions): Database.Database {
