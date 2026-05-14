@@ -2,6 +2,12 @@
 
 All notable changes to terminal-agents-usage.
 
+## [0.0.5] - 2026-05-14
+
+### Fixed
+
+- **OpenClaw adapter**: trajectory format (`.trajectory.jsonl`) now correctly extracts cache read/write tokens from `model.completed` events instead of hardcoding them to 0.
+
 ## [0.0.4] - 2026-05-14
 
 ### Fixed

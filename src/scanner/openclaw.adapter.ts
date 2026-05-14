@@ -36,6 +36,8 @@ interface OpenClawTrajectoryEvent {
       input?: number;
       output?: number;
       total?: number;
+      cacheRead?: number;
+      cacheWrite?: number;
     };
   };
 }
@@ -201,8 +203,8 @@ export class OpenClawAdapter extends BaseAdapter {
             model: currentModel ?? null,
             input_tokens: usage.input ?? 0,
             output_tokens: usage.output ?? 0,
-            cache_read_tokens: 0,
-            cache_creation_tokens: 0,
+            cache_read_tokens: usage.cacheRead ?? 0,
+            cache_creation_tokens: usage.cacheWrite ?? 0,
             tool_name: null,
             cwd: currentCwd ?? null,
             source_id: null,
